@@ -8,16 +8,17 @@ exports.notificationStartAppointment = functions.https.onCall(
     // let doctorName = request.doctorName;
     // let roomName = request.roomName;
     // let agoraToken = request.token;
-    const { doctorName, roomName, token, timeSlotId } = request;
+    const { name, roomName, token, timeSlotId , toDoctor} = request;
     let userId = request.userId;
     let userToken = await getUserTokenById(userId); //await userService.getUserTokenById(userId);
     console.log("token user : " + userToken);
     await startVideoCallNotification(
       roomName,
-      doctorName,
+      name,
       token,
       userId,
-      timeSlotId
+      timeSlotId,
+      toDoctor
     );
     // await sendNotification(
     //   userToken,
@@ -94,7 +95,8 @@ export async function startVideoCallNotification(
   fromName: string,
   agoraToken: string,
   userId: string,
-  timeSlotId: string
+  timeSlotId: string,
+  toDoctor: boolean,
 ) {
   try {
     let title = `Incomming call from ${fromName}`;
@@ -114,7 +116,11 @@ export async function startVideoCallNotification(
       },
     };
 
-    let userToken = await getUserTokenById(userId);
+    let userToken;
+    if(toDoctor)
+      userToken = await getUserTokenById(userId);
+    else
+      userToken = await getUserTokenById(userId);
     console.log("user token : " + userToken);
     console.log("payload : " + JSON.stringify(payload));
     admin
