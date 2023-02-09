@@ -1,12 +1,12 @@
-import { usersCol, UserModel, lawyerCol } from "./collections";
+import { usersCol, UserModel, doctorCol } from "./collections";
 import * as admin from "firebase-admin";
 export async function getUserTokenById(userId: string): Promise<string> {
   let user = await usersCol.doc(userId).get();
   return Promise.resolve(user.data()?.token!);
 }
 
-export async function getUserByLawyerId(lawyerId: string): Promise<UserModel> {
-  var userRef = await usersCol.where("lawyerId", "==", lawyerId).get();
+export async function getUserByDoctorId(doctorId: string): Promise<UserModel> {
+  var userRef = await usersCol.where("doctorId", "==", doctorId).get();
   return userRef.docs[0].data();
 }
 
@@ -28,10 +28,10 @@ async function deleteUserInAuth(userId: string) {
   }
 }
 
-export async function deleteLawyer(lawyerId: string) {
+export async function deleteDoctor(doctorId: string) {
   try {
-    let user = await getUserByLawyerId(lawyerId);
-    await lawyerCol.doc(lawyerId).delete();
+    let user = await getUserByDoctorId(doctorId);
+    await doctorCol.doc(doctorId).delete();
     if (user) {
       await deleteUser(user.uid);
       console.log("success delete user");
@@ -39,10 +39,10 @@ export async function deleteLawyer(lawyerId: string) {
       console.log("User null " + user);
     }
 
-    console.log("success delete lawyer");
+    console.log("success delete doctor");
   } catch (error) {
     console.log(
-      "🚀 ~ file: user-service.js ~ line 67 ~ deleteLawyer ~ error",
+      "🚀 ~ file: user-service.js ~ line 67 ~ deleteDoctor ~ error",
       error
     );
     throw error;

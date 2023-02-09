@@ -6,7 +6,7 @@ export enum OrderStatus {
 }
 
 export enum Role {
-  Lawyer = "lawyer",
+  Doctor = "doctor",
   User = "user",
   Admin = "admin",
 }
@@ -21,7 +21,7 @@ export type OrderModel = {
 
 type TimeSlotModel = {
   available: boolean;
-  lawyerId: string;
+  doctorId: string;
   duration: number;
   userId: string;
   charged: boolean | undefined;
@@ -29,25 +29,25 @@ type TimeSlotModel = {
   price: number;
   timeSlot: firestore.Timestamp;
   bookByWho: BookByWho | undefined;
-  lawyer: LawyerModel | undefined;
+  doctor: DoctorModel | undefined;
   purchaseTime: firestore.Timestamp | undefined | null;
   status: string | undefined;
 };
 
-type LawyerModel = {
-  lawyerName: string;
-  lawyerPicture: string;
+type DoctorModel = {
+  doctorName: string;
+  doctorPicture: string;
   accountStatus: boolean;
   balance: number;
   createdAt: firestore.Timestamp;
   updatedAt: firestore.Timestamp;
-  lawyerBasePrice: number;
-  lawyerBiography: string;
-  lawyerCategory: LawyerCategoryModel;
-  lawyerHospital: string;
+  doctorBasePrice: number;
+  doctorBiography: string;
+  doctorCategory: DoctorCategoryModel;
+  doctorHospital: string;
 };
 
-type LawyerCategoryModel = {
+type DoctorCategoryModel = {
   categoryName: string;
   iconUrl: string;
   categoryId: string;
@@ -56,7 +56,7 @@ type LawyerCategoryModel = {
 export type UserModel = {
   createdAt: firestore.Timestamp;
   displayName: string;
-  lawyerId: string;
+  doctorId: string;
   role: Role;
   token: string;
   uid: string;
@@ -78,6 +78,6 @@ const createCollection = <T = firestore.DocumentData>(
 };
 
 export const orderCol = createCollection<OrderModel>("Order");
-export const timeSlotCol = createCollection<TimeSlotModel>("LawyerTimeslot");
-export const lawyerCol = createCollection<LawyerModel>("Lawyers");
+export const timeSlotCol = createCollection<TimeSlotModel>("DoctorTimeslot");
+export const doctorCol = createCollection<DoctorModel>("Doctors");
 export const usersCol = createCollection<UserModel>("Users");

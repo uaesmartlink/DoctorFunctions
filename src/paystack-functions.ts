@@ -4,7 +4,7 @@ import * as functions from "firebase-functions";
 // const { firestore } = require("firebase-admin");
 //const axios = require("axios");
 //const axios = require('axios').default;
-//Lawyer request money withdrawal
+//Doctor request money withdrawal
 import axios from "axios";
 import {
   confirmPayment,
@@ -16,7 +16,7 @@ import {
 import {
   orderCol,
   BookByWho,
-  lawyerCol,
+  doctorCol,
   usersCol,
   timeSlotCol,
 } from "./collections";
@@ -105,7 +105,7 @@ exports.paystackWebhook = functions.https.onRequest(
         throw "order is undefined";
       }
       const timeSlot = await timeSlotCol.doc(myOrder.data()?.timeSlotId!).get();
-      const lawyer = await lawyerCol.doc(timeSlot.data()?.lawyerId!).get();
+      const doctor = await doctorCol.doc(timeSlot.data()?.doctorId!).get();
       const user = (await usersCol.doc(myOrder.data()?.userId!).get()).data();
 
       const bookByWho: BookByWho = {
@@ -123,11 +123,11 @@ exports.paystackWebhook = functions.https.onRequest(
         fee: fees,
         paymentType: channel,
         bookByWho: bookByWho,
-        lawyer: {
-          lawyerName: lawyer.data()?.lawyerName!,
-          lawyerPicture: lawyer.data()?.lawyerPicture!,
+        doctor: {
+          doctorName: doctor.data()?.doctorName!,
+          doctorPicture: doctor.data()?.doctorPicture!,
         },
-        lawyerId: lawyer.id,
+        doctorId: doctor.id,
       };
 
       await confirmPayment(confirmPaymentData);

@@ -58,8 +58,8 @@ const config = function (plop) {
 
   plop.setActionType("dataSeed", async function (answers, config, plop) {
     console.log("Add Category");
-    let categoryName = "LawyerCategory";
-    let rawdata = fs.readFileSync(`${__dirname}/db_seed/LawyerCategory.json`);
+    let categoryName = "DoctorCategory";
+    let rawdata = fs.readFileSync(`${__dirname}/db_seed/DoctorCategory.json`);
     let category = JSON.parse(rawdata);
     return category.forEach(function (obj) {
       admin

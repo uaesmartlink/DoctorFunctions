@@ -5,7 +5,7 @@ const { firestore } = require("firebase-admin");
 const notificationFunction = require("./notification-function");
 
 exports.timeslotAdded = functions.firestore
-  .document("/LawyerTimeslot/{lawyerTimeslotId}")
+  .document("/DoctorTimeslot/{doctorTimeslotId}")
   .onCreate((snapshot, context) => {
     //snapshot.ref.update({ balance: 0 });
     const newValue = snapshot.data();
@@ -18,7 +18,7 @@ exports.timeslotAdded = functions.firestore
 async function refundTimeslot(timeSlotId, refundId) {
   try {
     var timeslotSnapshot = await db
-      .collection("LawyerTimeslot")
+      .collection("DoctorTimeslot")
       .doc(timeSlotId)
       .get();
     if (
@@ -51,12 +51,12 @@ async function refundTimeslot(timeSlotId, refundId) {
 exports.rescheduleTimeslot = functions.https.onCall(
   async (request, response) => {
     var timeSlotNow = await db
-      .collection("LawyerTimeslot")
+      .collection("DoctorTimeslot")
       .doc(request.timeSlotIdNow)
       .get();
 
     var timeSlotChanged = await db
-      .collection("LawyerTimeslot")
+      .collection("DoctorTimeslot")
       .doc(request.timeslotChanged)
       .get();
     console.log("timeslot now data : " + JSON.stringify(timeSlotNow.data()));
@@ -101,11 +101,11 @@ exports.rescheduleTimeslot = functions.https.onCall(
       timeSlotChangedTo: timeSlotNow.id,
     });
     var timeSlotNow2 = await db
-      .collection("LawyerTimeslot")
+      .collection("DoctorTimeslot")
       .doc(request.timeSlotIdNow)
       .get();
     var timeSlotChanged2 = await db
-      .collection("LawyerTimeslot")
+      .collection("DoctorTimeslot")
       .doc(request.timeSlotIdNow)
       .get();
     console.log("successfully reschedule appointment");
@@ -117,7 +117,7 @@ exports.rescheduleTimeslot = functions.https.onCall(
         JSON.stringify(timeSlotChanged2.data())
     );
     await notificationFunction.rescheduleTimeslotNotification(
-      timeSlotNow.data().lawyerId
+      timeSlotNow.data().doctorId
     );
   }
 );

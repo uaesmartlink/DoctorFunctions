@@ -2,7 +2,7 @@ import * as functions from "firebase-functions";
 // const stripeFunction = require("./stripe-function");
 const agoraFunction = require("./agora-functions");
 const notificationFunction = require("./notification-function");
-const lawyerFunction = require("./lawyer-functions");
+const doctorFunction = require("./doctor-functions");
 const userFunction = require("./user-functions");
 const timeSlotFunction = require("./timeslot-function");
 const withdrawFunction = require("./withdraw-functions");
@@ -10,14 +10,14 @@ import * as admin from "firebase-admin";
 const db = admin.firestore();
 const { firestore } = require("firebase-admin");
 
-exports.lawyerAdded = functions.firestore
-  .document("/Lawyers/{lawyerId}")
+exports.doctorAdded = functions.firestore
+  .document("/Doctors/{doctorId}")
   .onCreate((snapshot, context) => {
     snapshot.ref.update({ balance: 0 });
     return Promise.resolve();
   });
 
-// user confirm consultation complete, give money to lawyer & create transaction
+// user confirm consultation complete, give money to doctor & create transaction
 exports.confirmConsultation = functions.firestore
   .document("/Order/{orderId}")
   .onUpdate(async (change, context) => {
@@ -28,38 +28,38 @@ exports.confirmConsultation = functions.firestore
       newValue.status == "success" &&
       previousValue.status == "payment_success"
     ) {
-      //get lawyer timeslot
+      //get doctor timeslot
       let timeSlot = await db
-        .collection("LawyerTimeslot")
+        .collection("DoctorTimeslot")
         .doc(previousValue.timeSlotId)
         .get();
 
-      //increase lawyer balance by order ammount
+      //increase doctor balance by order ammount
       await db
-        .collection("Lawyers")
-        .doc(timeSlot.data()?.lawyerId)
+        .collection("Doctors")
+        .doc(timeSlot.data()?.doctorId)
         .get()
         .then((querySnapshot) => {
-          let lawyerBalance = querySnapshot.data()?.balance;
-          let balanceNow = (lawyerBalance += previousValue.amount);
+          let doctorBalance = querySnapshot.data()?.balance;
+          let balanceNow = (doctorBalance += previousValue.amount);
           querySnapshot.ref.update({ balance: balanceNow });
           console.log("balance now : " + balanceNow);
         });
 
-      //get user id by lawyer
+      //get user id by doctor
       let userId = await db
         .collection("Users")
-        .where("lawyerId", "==", timeSlot.data()?.lawyerId)
+        .where("doctorId", "==", timeSlot.data()?.doctorId)
         .get()
         .then(async (querySnapshot) => {
-          let lawyerId = {};
+          let doctorId = {};
           querySnapshot.forEach(function (doc) {
-            lawyerId = doc.id;
+            doctorId = doc.id;
           });
-          return lawyerId;
+          return doctorId;
         });
 
-      //Create Transaction for lawyer, that user already comfirm their consultation
+      //Create Transaction for doctor, that user already comfirm their consultation
       await db.collection("Transaction").add({
         userId: userId,
         amount: previousValue.amount,
@@ -77,7 +77,7 @@ exports.generateToken = agoraFunction.generateToken;
 // exports.stripeWebhook = stripeFunction.stripeWebhook;
 exports.notificationStartAppointment =
   notificationFunction.notificationStartAppointment;
-exports.deleteLawyer = lawyerFunction.deleteLawyer;
+exports.deleteDoctor = doctorFunction.deleteDoctor;
 exports.deleteUser = userFunction.deleteUser;
 exports.rescheduleTimeslot = timeSlotFunction.rescheduleTimeslot;
 exports.withdrawRequiest = withdrawFunction.withdrawRequest;

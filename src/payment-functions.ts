@@ -26,9 +26,9 @@ enum TimeSlotStatus {
   refund = "refund",
   cancel = "cancel",
 }
-type LawyerTimeslot = {
-  lawyerName: string;
-  lawyerPicture: string;
+type DoctorTimeslot = {
+  doctorName: string;
+  doctorPicture: string;
 };
 
 export interface ConfirmPayment {
@@ -41,8 +41,8 @@ export interface ConfirmPayment {
   fee: string;
   paymentType: string;
   bookByWho: BookByWho;
-  lawyer: LawyerTimeslot;
-  lawyerId: string;
+  doctor: DoctorTimeslot;
+  doctorId: string;
 }
 export async function confirmPayment(confirmPayment: ConfirmPayment) {
   try {
@@ -60,12 +60,12 @@ export async function confirmPayment(confirmPayment: ConfirmPayment) {
       available: false,
       bookByWho: confirmPayment.bookByWho,
       status: TimeSlotStatus.booked,
-      lawyer: confirmPayment.lawyer,
+      doctor: confirmPayment.doctor,
       purchaseTime: firestore.Timestamp.fromDate(new Date()),
     });
 
     await notificationFunction.orderedTimeslotNotification(
-      confirmPayment.lawyerId
+      confirmPayment.doctorId
     );
   } catch (error) {
     throw error;

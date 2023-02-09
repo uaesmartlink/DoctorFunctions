@@ -2,7 +2,7 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const db = admin.firestore();
 const { firestore } = require("firebase-admin");
-//Lawyer request money withdrawal
+//Doctor request money withdrawal
 exports.withdrawRequest = functions.firestore
   .document("/WithdrawRequest/{withdrawRequestId}")
   .onCreate(async (snapshot, context) => {
@@ -15,46 +15,46 @@ exports.withdrawRequest = functions.firestore
       .doc("withdrawSetting")
       .get();
 
-    let lawyerId = await db
+    let doctorId = await db
       .collection("Users")
       .doc(userId)
       .get()
       .then((doc) => {
-        return doc.data().lawyerId;
+        return doc.data().doctorId;
       });
 
-    console.log("lawyer id : " + lawyerId);
-    //decrease lawyer balance amount
-    let lawyer = await db.collection("Lawyers").doc(lawyerId).get();
+    console.log("doctor id : " + doctorId);
+    //decrease doctor balance amount
+    let doctor = await db.collection("Doctors").doc(doctorId).get();
 
-    let lawyerBalance = lawyer.data().balance;
+    let doctorBalance = doctor.data().balance;
 
-    console.log("balance : " + lawyerBalance);
-    if (lawyerBalance <= 0) {
+    console.log("balance : " + doctorBalance);
+    if (doctorBalance <= 0) {
       snapshot.ref.delete();
       return Promise.reject();
     }
-    let adminFee = (lawyerBalance / 100) * withdrawSettings.data().percentage;
-    let taxCut = (lawyerBalance / 100) * withdrawSettings.data().tax;
-    let totalAmount = lawyerBalance - (adminFee + taxCut);
+    let adminFee = (doctorBalance / 100) * withdrawSettings.data().percentage;
+    let taxCut = (doctorBalance / 100) * withdrawSettings.data().tax;
+    let totalAmount = doctorBalance - (adminFee + taxCut);
 
     await snapshot.ref.update({
-      amount: lawyerBalance,
+      amount: doctorBalance,
       adminFee: adminFee.toFixed(2),
       tax: taxCut.toFixed(2),
       totalWithdraw: totalAmount.toFixed(2),
       status: "pending",
       createdAt: firestore.Timestamp.fromDate(new Date()),
     });
-    //let balanceNow = (lawyerBalance -= snapshot.data().amount);
+    //let balanceNow = (doctorBalance -= snapshot.data().amount);
 
-    await lawyer.ref.update({ balance: 0 });
+    await doctor.ref.update({ balance: 0 });
 
     //add transaction
     await db.collection("Transaction").add({
       userId: userId,
       withdrawMethod: snapshot.data().withdrawMethod,
-      amount: lawyerBalance,
+      amount: doctorBalance,
       status: "pending",
       type: "withdraw",
       createdAt: firestore.Timestamp.fromDate(new Date()),

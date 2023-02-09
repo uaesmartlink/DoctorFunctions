@@ -1,37 +1,37 @@
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
-import { getUserByLawyerId, getUserTokenById } from "./user-service";
+import { getUserByDoctorId, getUserTokenById } from "./user-service";
 
 exports.notificationStartAppointment = functions.https.onCall(
   async (request, response) => {
     console.log("Start appointment notification send");
-    // let lawyerName = request.lawyerName;
+    // let doctorName = request.doctorName;
     // let roomName = request.roomName;
     // let agoraToken = request.token;
-    const { lawyerName, roomName, token, timeSlotId } = request;
+    const { doctorName, roomName, token, timeSlotId } = request;
     let userId = request.userId;
     let userToken = await getUserTokenById(userId); //await userService.getUserTokenById(userId);
     console.log("token user : " + userToken);
     await startVideoCallNotification(
       roomName,
-      lawyerName,
+      doctorName,
       token,
       userId,
       timeSlotId
     );
     // await sendNotification(
     //   userToken,
-    //   `Hi. ${lawyerName} has started the consultation session`,
+    //   `Hi. ${doctorName} has started the consultation session`,
     //   "Please join the room, to start the consultation session"
     // );
   }
 );
 
-export async function orderedTimeslotNotification(lawyerId: string) {
+export async function orderedTimeslotNotification(doctorId: string) {
   try {
-    let lawyerUser = await getUserByLawyerId(lawyerId);
+    let doctorUser = await getUserByDoctorId(doctorId);
     await sendNotification(
-      lawyerUser.token,
+      doctorUser.token,
       "Timeslot Ordered!",
       "one of your timeslots has been booked"
     );
@@ -39,14 +39,14 @@ export async function orderedTimeslotNotification(lawyerId: string) {
 }
 
 /**
- * send notification to lawyer, when timeslot is reschedule
- * @param lawyerId the lawyer id
+ * send notification to doctor, when timeslot is reschedule
+ * @param doctorId the doctor id
  */
-export async function rescheduleTimeslotNotification(lawyerId: string) {
+export async function rescheduleTimeslotNotification(doctorId: string) {
   try {
-    let lawyerUser = await getUserByLawyerId(lawyerId);
+    let doctorUser = await getUserByDoctorId(doctorId);
     await sendNotification(
-      lawyerUser.token,
+      doctorUser.token,
       "Reschedule Appointment",
       "one of your timeslots has been rescheduled"
     );

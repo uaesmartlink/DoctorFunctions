@@ -11,7 +11,7 @@
 // exports.purchaseTimeslot = functions.https.onCall(async (request, response) => {
 //   try {
 //     let purchasedTimeSlot = await db
-//       .collection("LawyerTimeslot")
+//       .collection("DoctorTimeslot")
 //       .doc(request.timeSlotId)
 //       .get();
 
@@ -84,16 +84,16 @@
 //         //Get user info who book this timeslot
 //         let bookByWho = await db.collection("Users").doc(order.userId).get();
 
-//         //Update LawyerTimeslot
+//         //Update DoctorTimeslot
 //         let timeSlotRef = await db
-//           .collection("LawyerTimeslot")
+//           .collection("DoctorTimeslot")
 //           .doc(order.timeSlotId)
 //           .get();
 
-//         //Get lawyer detail data
-//         let lawyer = await db
-//           .collection("Lawyers")
-//           .doc(timeSlotRef.data().lawyerId)
+//         //Get doctor detail data
+//         let doctor = await db
+//           .collection("Doctors")
+//           .doc(timeSlotRef.data().doctorId)
 //           .get();
 
 //         await timeSlotRef.ref.update({
@@ -107,14 +107,14 @@
 //               : "",
 //           },
 //           status: "booked",
-//           lawyer: {
-//             lawyerName: lawyer.data().lawyerName,
-//             lawyerPicture: lawyer.data().lawyerPicture,
+//           doctor: {
+//             doctorName: doctor.data().doctorName,
+//             doctorPicture: doctor.data().doctorPicture,
 //           },
 //           purchaseTime: firestore.Timestamp.fromDate(new Date()),
 //         });
-//         //send notification to lawyer
-//         await notificationFunction.orderedTimeslotNotification(lawyer.id);
+//         //send notification to doctor
+//         await notificationFunction.orderedTimeslotNotification(doctor.id);
 //         console.log("payment success");
 
 //         break;
