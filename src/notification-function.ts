@@ -1,6 +1,6 @@
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
-import { getUserByDoctorId, getUserTokenById } from "./user-service";
+import { getUserByDoctorId, getUserTokenById, getDoctorTokenById } from "./user-service";
 
 exports.notificationStartAppointment = functions.https.onCall(
   async (request, response) => {
@@ -8,18 +8,27 @@ exports.notificationStartAppointment = functions.https.onCall(
     // let doctorName = request.doctorName;
     // let roomName = request.roomName;
     // let agoraToken = request.token;
-    const { name, roomName, token, timeSlotId , toDoctor} = request;
-    let userId = request.userId;
-    let userToken = await getUserTokenById(userId); //await userService.getUserTokenById(userId);
+    const { name, userId, roomName, token, timeSlotId, toDoctor } = request;
+    let userToken;
+    // if(toDoctor)
+    //     userToken = await getDoctorTokenById(userId)
+    // else
+    userToken = await getUserTokenById(userId);
+        
     console.log("token user : " + userToken);
-    await startVideoCallNotification(
-      roomName,
-      name,
-      token,
-      userId,
-      timeSlotId,
-      toDoctor
-    );
+    await startVideoCallNotification(roomName, name, token, userId, timeSlotId, userToken);
+    // const { name, roomName, token, timeSlotId , toDoctor} = request;
+    // let userId = request.userId;
+    // let userToken = await getUserTokenById(userId); //await userService.getUserTokenById(userId);
+    // console.log("token user : " + userToken);
+    // await startVideoCallNotification(
+    //   roomName,
+    //   name,
+    //   token,
+    //   userId,
+    //   timeSlotId,
+    //   userToken
+    // );
     // await sendNotification(
     //   userToken,
     //   `Hi. ${doctorName} has started the consultation session`,
@@ -96,7 +105,7 @@ export async function startVideoCallNotification(
   agoraToken: string,
   userId: string,
   timeSlotId: string,
-  toDoctor: boolean,
+  userToken: string,
 ) {
   try {
     let title = `Incomming call from ${fromName}`;
@@ -116,11 +125,11 @@ export async function startVideoCallNotification(
       },
     };
 
-    let userToken;
-    if(toDoctor)
-      userToken = await getUserTokenById(userId);
-    else
-      userToken = await getUserTokenById(userId);
+    // let userToken;
+    // if(toDoctor)
+    //   userToken = await getUserTokenById(userId);
+    // else
+    //   userToken = await getUserTokenById(userId);
     console.log("user token : " + userToken);
     console.log("payload : " + JSON.stringify(payload));
     admin

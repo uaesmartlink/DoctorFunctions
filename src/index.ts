@@ -81,3 +81,5 @@ exports.deleteDoctor = doctorFunction.deleteDoctor;
 exports.deleteUser = userFunction.deleteUser;
 exports.rescheduleTimeslot = timeSlotFunction.rescheduleTimeslot;
 exports.withdrawRequiest = withdrawFunction.withdrawRequest;
+exports.updateTimeslotAvailable = timeSlotFunction.updateTimeslotAvailable;
+exports.timeslotAdded = timeSlotFunction.timeslotAdded;

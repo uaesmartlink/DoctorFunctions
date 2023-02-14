@@ -45,6 +45,7 @@ type DoctorModel = {
   doctorBiography: string;
   doctorCategory: DoctorCategoryModel;
   doctorHospital: string;
+  token: string;
 };
 
 type DoctorCategoryModel = {

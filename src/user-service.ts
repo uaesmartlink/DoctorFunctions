@@ -5,6 +5,12 @@ export async function getUserTokenById(userId: string): Promise<string> {
   return Promise.resolve(user.data()?.token!);
 }
 
+export async function getDoctorTokenById(userId: string): Promise<string> {
+  let user = await doctorCol.doc(userId).get();
+  return Promise.resolve(user.data()?.token!);
+}
+
+
 export async function getUserByDoctorId(doctorId: string): Promise<UserModel> {
   var userRef = await usersCol.where("doctorId", "==", doctorId).get();
   return userRef.docs[0].data();
